@@ -14,9 +14,9 @@
 		01558A451BE4BF9E005917A0 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 01558A431BE4BF9E005917A0 /* LaunchScreen.storyboard */; };
 		01558A501BE4BF9E005917A0 /* Poly_WeatherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01558A4F1BE4BF9E005917A0 /* Poly_WeatherTests.swift */; };
 		01558A5B1BE4BF9E005917A0 /* Poly_WeatherUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01558A5A1BE4BF9E005917A0 /* Poly_WeatherUITests.swift */; };
-		01558A691BE4DBDE005917A0 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01558A681BE4DBDE005917A0 /* WeatherService.swift */; settings = {ASSET_TAGS = (); }; };
-		01558A6B1BE4E489005917A0 /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01558A6A1BE4E489005917A0 /* Weather.swift */; settings = {ASSET_TAGS = (); }; };
-		01558A6D1BE50EEC005917A0 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01558A6C1BE50EEC005917A0 /* SwiftyJSON.swift */; settings = {ASSET_TAGS = (); }; };
+		01558A691BE4DBDE005917A0 /* WeatherService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01558A681BE4DBDE005917A0 /* WeatherService.swift */; };
+		01558A6B1BE4E489005917A0 /* Weather.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01558A6A1BE4E489005917A0 /* Weather.swift */; };
+		01558A6D1BE50EEC005917A0 /* SwiftyJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = 01558A6C1BE50EEC005917A0 /* SwiftyJSON.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -414,6 +414,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "co.marcins.Poly-Weather";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -425,6 +426,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = "co.marcins.Poly-Weather";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -495,6 +497,7 @@
 				01558A611BE4BF9E005917A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		01558A621BE4BF9E005917A0 /* Build configuration list for PBXNativeTarget "Poly WeatherTests" */ = {
 			isa = XCConfigurationList;
@@ -503,6 +506,7 @@
 				01558A641BE4BF9E005917A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		01558A651BE4BF9E005917A0 /* Build configuration list for PBXNativeTarget "Poly WeatherUITests" */ = {
 			isa = XCConfigurationList;
@@ -511,6 +515,7 @@
 				01558A671BE4BF9E005917A0 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

@@ -13,11 +13,19 @@ class ViewController: UITableViewController, WeatherServiceDelegate, CLLocationM
     
 //    let weatherLocations = [("cityName", "temper", "description")]
     
-    let weatherLocations = ["currentLocation", "NewYork", "Shanghai", "Moscow", "Sydney"]
+    let weatherLocations = ["currentLocation", "NewYork", "Shanghai", "Paris", "Sydney"]
+    
+    var currentCity : Weather?
 
     // creating an instance of WeatherService class
     let weatherService = WeatherService()
     
+    var cityObjects : [Weather]?
+    var multiCityDataHasBeenDownloaded = false
+    var currentCitydataHasBeenDownloaded = false
+    
+    var locationUpdated = false
+
     
     var lat : String = ""
     var long : String = ""
@@ -32,50 +40,98 @@ class ViewController: UITableViewController, WeatherServiceDelegate, CLLocationM
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return weatherLocations.count
     }
-
+    
+    func reloadCells() {
+        dispatch_async(dispatch_get_main_queue(), { () -> Void in
+            self.tableView.reloadData()
+        })
+    }
+    
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCellWithIdentifier("Cell", forIndexPath: indexPath) as? CustomCell
         
-        let weatherLocation = weatherLocations[indexPath.row]
-        
-        if (indexPath.row == 0) {
-            weatherService.getWeatherWithLatAndLong(lat, longitude: long, completion: { (let weather) -> Void in
+        if indexPath.row == 0 {
+            if locationUpdated == true {
                 dispatch_async(dispatch_get_main_queue()) {
-                    cell?.cityLabel.text = weather.cityName
-                    cell?.temperatureLabel.text = "\(weather.temp)"
-                    cell?.descriptionLabel.text = weather.description
-                    cell?.weatherImageView.image = UIImage(named:"clouds.jpg")
+                    cell?.cityLabel!.text = self.currentCity!.cityName
+                    cell?.temperatureLabel!.text = "\(self.currentCity!.temp)°"
+                    cell?.descriptionLabel!.text = self.currentCity!.description
+                    cell?.weatherImageView.image = UIImage(named:"\(self.currentCity!.weatherImage).jpg")
                 }
-            })
-            
+                return cell!
+            }
         } else {
-            weatherService.getWeather(weatherLocation, completion: { (let weather) -> Void in
-                dispatch_async(dispatch_get_main_queue()) {
-                    cell?.cityLabel.text = weather.cityName
-                    cell?.temperatureLabel.text = "\(weather.temp)"
-                    cell?.descriptionLabel.text = weather.description
-                    cell?.weatherImageView.image = UIImage(named:"clouds.jpg")
+            if (self.multiCityDataHasBeenDownloaded == false) {
+                return cell!
+            } else {
+                if let cityArray = self.cityObjects {
+                    let city = cityArray[indexPath.row]
+                    cell?.cityLabel.text = city.cityName
+                    cell?.temperatureLabel.text = "\(city.temp)°"
+                    cell?.descriptionLabel.text = city.description
+                    
+                    switch (indexPath.row) {
+                    case 0:
+                        cell?.weatherImageView.image = UIImage(named:"\(city.weatherImage).jpg")
+                        break
+                    case 1:
+                        cell?.weatherImageView.image = UIImage(named:"\(city.weatherImage)NY.jpg")
+                        break
+                    case 2:
+                        cell?.weatherImageView.image = UIImage(named:"\(city.weatherImage)S.jpg")
+                        break
+                    case 3:
+                        cell?.weatherImageView.image = UIImage(named:"\(city.weatherImage)P.jpg")
+                        break
+                    case 4:
+                        cell?.weatherImageView.image = UIImage(named:"\(city.weatherImage)SY.jpg")
+                        break
+                    default:
+                        break
+                    }
                 }
-            })
+                return cell!
+            }
+        
         }
-        
-        
-        
-//        let (city, temperat, descript) = weatherLocations[indexPath.row]
-        
-//        cell.textLabel?.text = city
-        //cell.textLabel!.text = temperat
-//        cell.detailTextLabel?.text = descript
-        
         return cell!
     }
 
+
+    func locationAvailable(notification:NSNotification) -> Void {
+        
+        if (self.locationUpdated == false) {
+            self.weatherService.getWeatherWithLatAndLong(self.lat, longitude: self.long, completion: { (let city) -> Void in
+                self.currentCity = city
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.tableView.reloadData()
+                }
+            })
+        }
+        self.locationUpdated = true
+    }
+    
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
         let latestLocation = locations[locations.count - 1]
         lat = String (format: "%.4f", latestLocation.coordinate.latitude)
         long = String (format: "%.4f", latestLocation.coordinate.longitude)
+        
+        NSNotificationCenter.defaultCenter().postNotificationName("LOCATION_AVAILABLE", object: nil, userInfo: nil)
+        
+//        self.tableView.reloadData()
+//        if (self.locationUpdated == false) {
+//            self.weatherService.getWeatherWithLatAndLong(lat, longitude: long) { (let city) -> Void in
+//                dispatch_async(dispatch_get_main_queue()) {
+//                    self.currentCity = city
+//                    self.currentCitydataHasBeenDownloaded = true
+//                    self.locationUpdated = true
+//                    self.tableView.reloadData()
+//                }
+//            }
+//        }
+        
         
         if startLocation == nil {
             startLocation = latestLocation 
@@ -146,28 +202,25 @@ class ViewController: UITableViewController, WeatherServiceDelegate, CLLocationM
         locationManager.startUpdatingLocation()
         startLocation = nil
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "locationAvailable:", name: "LOCATION_AVAILABLE", object: nil)
+
+        
+//        weatherService.getWeather { (let weatherArray) -> Void in
+//            //
+//        }
+//        
+//        weatherService.getWeatherWithLatAndLong(self.lat, longitude: self.long) { (let city) -> Void in
+//            //
+//        }
+//
+        weatherService.getWeatherMulti({ (let weatherArray) -> Void in
+            dispatch_async(dispatch_get_main_queue()) {
+                self.cityObjects = weatherArray
+                self.multiCityDataHasBeenDownloaded = true
+                self.tableView.reloadData()
+            }
+        })
     }
-
-    
-    override func viewDidAppear(animated: Bool) {
-        super.viewDidAppear(animated)
-        
-
-        
-        let defaults = NSUserDefaults.standardUserDefaults()
-      
-        
-        if let cityDefault = defaults.stringForKey("cityName") {
-//            self.weatherService.getWeather(cityDefault)
-        }
-        else{
-        openCityAlert()}
-
-        
-    
-    }
-
-
 }
 
 
