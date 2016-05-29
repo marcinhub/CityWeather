@@ -58,7 +58,14 @@ class ViewController: UITableViewController, WeatherServiceDelegate, CLLocationM
                     cell?.descriptionLabel!.text = self.currentCity!.description
                     cell?.weatherImageView.image = UIImage(named:"\(self.currentCity!.weatherImage).jpg")
                 }
+
                 return cell!
+            }
+            if locationUpdated == false {
+                    cell?.cityLabel!.text = ""
+                    cell?.temperatureLabel!.text = ""
+                    cell?.descriptionLabel!.text = ""
+                    cell?.weatherImageView.image = UIImage(named:"NoCity.png")
             }
         } else {
             if (self.multiCityDataHasBeenDownloaded == false) {
